@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fitness Tracker">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Track your workouts, log sets, and monitor progress">
+    
+    <title>Fitness Tracker</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #262626;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent: #007AFF;
+            --accent-dark: #0051D5;
+            --success: #34C759;
+            --warning: #FF9500;
+            --yellow: #FFD60A;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--bg-tertiary);
+            z-index: 1000;
+        }
+
+        .tab-button {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .tab-button.active {
+            color: var(--accent);
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 20px 24px calc(80px + env(safe-area-inset-bottom)) 24px;
+            min-height: 100vh;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .card-clickable {
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .card-clickable:active {
+            transform: scale(0.98);
+        }
+
+        /* Exercise Card */
+        .exercise-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            opacity: 0.3;
+            flex-shrink: 0;
+        }
+
+        .status-dot.completed {
+            background: var(--success);
+            opacity: 1;
+        }
+
+        .exercise-info {
+            flex: 1;
+        }
+
+        .exercise-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .exercise-target {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .exercise-progress {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-right: 8px;
+        }
+
+        .exercise-progress.completed {
+            color: var(--success);
+        }
+
+        .chevron {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Set Logger */
+        .logger-header {
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            padding: 20px 0;
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+
+        .logger-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .logger-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-pb {
+            color: var(--yellow);
+        }
+
+        /* Set Row */
+        .set-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .set-row.active {
+            background: rgba(0, 122, 255, 0.2);
+            border: 2px solid var(--accent);
+            padding: 18px;
+        }
+
+        .set-number {
+            font-size: 20px;
+            font-weight: 700;
+            width: 32px;
+            text-align: center;
+        }
+
+        .set-row.active .set-number {
+            color: var(--accent);
+        }
+
+        .set-details {
+            flex: 1;
+        }
+
+        .set-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .set-empty {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .set-check {
+            font-size: 24px;
+            color: var(--success);
+        }
+
+        /* Input Panel */
+        .input-panel {
+            position: fixed;
+            bottom: 64px;
+            left: 0;
+            right: 0;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--bg-tertiary);
+            z-index: 900;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            width: 100%;
+            -webkit-appearance: none;
+        }
+
+        .input-field:focus {
+            outline: 2px solid var(--accent);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:active {
+            background: var(--accent-dark);
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            background: rgba(136, 136, 136, 0.3);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--accent);
+        }
+
+        .btn-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            color: var(--accent);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* History Card */
+        .history-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .history-date {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .history-day {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .history-stats {
+            text-align: right;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .history-volume {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Rest Day */
+        .rest-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 200px);
+        }
+
+        .rest-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .rest-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .rest-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bg-secondary);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding: 0 24px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: var(--bg-primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .done-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+        <div class="content">
+            <div class="header">
+                <h1 id="today-title">Monday</h1>
+                <div class="subtitle" id="workout-subtitle">Push</div>
+            </div>
+            <div id="exercises-list"></div>
+        </div>
+    </div>
+
+    <!-- Workout Session Screen -->
+    <div id="session-screen" class="screen">
+        <div class="top-bar">
+            <button class="back-btn" onclick="app.backToHome()">← Back</button>
+            <button class="done-btn" onclick="app.saveAndExit()">Done</button>
+        </div>
+        <div class="content">
+            <div class="logger-header">
+                <div class="logger-title" id="exercise-title">Bench Press</div>
+                <div class="logger-stats">
+                    <div class="stat-item">
+                        <span>🕐</span>
+                        <span id="last-weight">Last: 80kg</span>
+                    </div>
+                    <div class="stat-item stat-pb">
+                        <span>⭐</span>
+                        <span id="personal-best">PB: 90kg × 8</span>
+                    </div>
+                </div>
+            </div>
+            <div id="sets-list"></div>
+        </div>
+        <div class="input-panel" id="input-panel">
+            <div class="input-row">
+                <div class="input-group">
+                    <div class="input-label">Weight (kg)</div>
+                    <input type="number" inputmode="decimal" class="input-field" id="weight-input" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <div class="input-label">Reps</div>
+                    <input type="number" inputmode="numeric" class="input-field" id="reps-input" placeholder="0">
+                </div>
+            </div>
+            <button class="btn btn-primary" id="complete-btn" onclick="app.completeSet()">Complete Set</button>
+        </div>
+    </div>
+
+    <!-- History Screen -->
+    <div id="history-screen" class="screen">
+        <div class="content">
+            <div class="header">
+                <h1>History</h1>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">This Week</div>
+                    <div class="stat-value" id="week-count">0</div>
+                    <div class="stat-label">workouts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">This Month</div>
+                    <div class="stat-value" id="month-count">0</div>
+                    <div class="stat-label">workouts</div>
+                </div>
+            </div>
+            <h2 class="section-title">Recent Workouts</h2>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <!-- Progress Screen -->
+    <div id="progress-screen" class="screen">
+        <div class="content">
+            <div class="header">
+                <h1>Progress</h1>
+            </div>
+            <div class="empty-state">
+                <div class="empty-icon">📈</div>
+                <div class="empty-title">Progress tracking coming soon</div>
+                <div class="empty-text">Complete workouts to see your progress</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+        <button class="tab-button active" onclick="app.switchTab('home')">
+            <div class="tab-icon">🏋️</div>
+            <div>Workout</div>
+        </button>
+        <button class="tab-button" onclick="app.switchTab('history')">
+            <div class="tab-icon">📅</div>
+            <div>History</div>
+        </button>
+        <button class="tab-button" onclick="app.switchTab('progress')">
+            <div class="tab-icon">📈</div>
+            <div>Progress</div>
+        </button>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>

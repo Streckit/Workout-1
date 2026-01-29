@@ -1,0 +1,47 @@
+⚠️ ICONS NEEDED
+
+You need 2 icon files for the app to work properly:
+- icon-192.png (192x192 pixels)
+- icon-512.png (512x512 pixels)
+
+EASY WAYS TO CREATE:
+
+1. **Emoji to PNG** (Easiest)
+   - Go to: https://favicon.io/emoji-favicons/
+   - Choose: 💪 (muscle) or 🏋️ (weightlifter)
+   - Background: Black
+   - Download
+   - Rename to icon-192.png and icon-512.png
+
+2. **Canva** (Free)
+   - Go to canva.com
+   - Create 192x192 design
+   - Black background
+   - Add 💪 emoji or text
+   - Download as PNG
+   - Repeat for 512x512
+
+3. **Figma** (Free)
+   - Create frame 192x192
+   - Fill black
+   - Add emoji
+   - Export PNG
+
+4. **Use Text**
+   - Background: Black (#000000)
+   - Text: "💪" or "FT"
+   - Font: Bold, White
+   - Center aligned
+
+WITHOUT ICONS:
+- App works fine
+- Just won't have custom icon on home screen
+- Will show default browser icon
+- Can add icons later
+
+WITH ICONS:
+- Professional look
+- Custom home screen icon
+- Branded experience
+
+Upload icons to same folder as other files!

@@ -1,0 +1,8 @@
+This is a placeholder for icon-192.png
+You'll need to create actual PNG icons.
+
+For now, you can use any 192x192 image or generate one at:
+- https://favicon.io/
+- https://realfavicongenerator.net/
+
+Suggested icon: 💪 emoji on black background
