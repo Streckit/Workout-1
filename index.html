@@ -499,6 +499,119 @@
             padding: 0 24px;
         }
 
+        /* Date Picker Button */
+        .date-picker-btn {
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .date-picker-btn:active {
+            transform: scale(0.95);
+            background: var(--bg-tertiary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .modal-close:active {
+            background: var(--bg-tertiary);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--bg-tertiary);
+        }
+
+        /* Date Input */
+        .date-input {
+            width: 100%;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--bg-tertiary);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: inherit;
+            margin-bottom: 16px;
+            -webkit-appearance: none;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .date-shortcuts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
         /* Top Bar */
         .top-bar {
             display: flex;
@@ -537,10 +650,34 @@
     <div id="home-screen" class="screen active">
         <div class="content">
             <div class="header">
-                <h1 id="today-title">Monday</h1>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <h1 id="today-title" style="margin: 0;">Monday</h1>
+                    <button class="date-picker-btn" onclick="app.showDatePicker()">📅</button>
+                </div>
                 <div class="subtitle" id="workout-subtitle">Push</div>
+                <div class="subtitle" id="selected-date" style="color: var(--accent); font-size: 14px; margin-top: 4px;"></div>
             </div>
             <div id="exercises-list"></div>
+        </div>
+    </div>
+
+    <!-- Date Picker Modal -->
+    <div id="date-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Select Date</h2>
+                <button class="modal-close" onclick="app.closeDatePicker()">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="date" id="date-input" class="date-input">
+                <div class="date-shortcuts">
+                    <button class="btn-secondary" onclick="app.selectToday()">Today</button>
+                    <button class="btn-secondary" onclick="app.selectYesterday()">Yesterday</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="app.applyDate()">Apply</button>
+            </div>
         </div>
     </div>
 

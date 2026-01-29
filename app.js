@@ -5,11 +5,13 @@ const app = {
     currentWorkout: null,
     currentSets: [],
     currentSetIndex: 0,
+    selectedDate: null, // New: track selected date
 
     // Initialize app
     async init() {
         await this.initDB();
         await this.seedExercises();
+        this.selectedDate = new Date(); // Default to today
         this.loadHome();
         this.registerServiceWorker();
     },
@@ -133,7 +135,7 @@ const app = {
 
     // Load home screen
     async loadHome() {
-        const today = new Date();
+        const today = this.selectedDate;
         const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
         
         // Update header
@@ -142,6 +144,21 @@ const app = {
         
         document.getElementById('today-title').textContent = days[dayOfWeek];
         document.getElementById('workout-subtitle').textContent = dayNames[dayOfWeek];
+
+        // Show selected date if not today
+        const dateDisplay = document.getElementById('selected-date');
+        const actualToday = new Date();
+        actualToday.setHours(0, 0, 0, 0);
+        const selectedDay = new Date(today);
+        selectedDay.setHours(0, 0, 0, 0);
+        
+        if (selectedDay.getTime() !== actualToday.getTime()) {
+            dateDisplay.textContent = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            dateDisplay.style.display = 'block';
+        } else {
+            dateDisplay.textContent = '';
+            dateDisplay.style.display = 'none';
+        }
 
         // Rest day check
         if (dayOfWeek === 0 || dayOfWeek === 6) {
@@ -155,10 +172,10 @@ const app = {
             return;
         }
 
-        // Get or create today's workout
-        this.currentWorkout = await this.getTodaysWorkout(dayOfWeek);
+        // Get or create workout for selected date
+        this.currentWorkout = await this.getWorkoutForDate(today, dayOfWeek);
 
-        // Load exercises for today
+        // Load exercises for this day
         const exercises = await this.getRecords('exercises', 'dayOfWeek', dayOfWeek);
         exercises.sort((a, b) => a.order - b.order);
 
@@ -186,26 +203,31 @@ const app = {
         }).join('');
     },
 
-    // Get or create today's workout
-    async getTodaysWorkout(dayOfWeek) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const todayTime = today.getTime();
+    // Get or create workout for specific date
+    async getWorkoutForDate(date, dayOfWeek) {
+        const targetDate = new Date(date);
+        targetDate.setHours(0, 0, 0, 0);
+        const targetTime = targetDate.getTime();
 
-        // Check for existing workout today
-        const workouts = await this.getRecords('workouts', 'date', todayTime);
+        // Check for existing workout on this date
+        const workouts = await this.getRecords('workouts', 'date', targetTime);
         if (workouts.length > 0) {
             return workouts[0];
         }
 
         // Create new workout
         const workout = {
-            date: todayTime,
+            date: targetTime,
             dayOfWeek: dayOfWeek,
             completed: false
         };
         const id = await this.addRecord('workouts', workout);
         return { id, ...workout };
+    },
+
+    // Get or create today's workout (kept for compatibility)
+    async getTodaysWorkout(dayOfWeek) {
+        return this.getWorkoutForDate(new Date(), dayOfWeek);
     },
 
     // Open exercise session
@@ -508,6 +530,44 @@ const app = {
                 .then(() => console.log('Service Worker registered'))
                 .catch(err => console.log('Service Worker registration failed:', err));
         }
+    },
+
+    // Date picker functions
+    showDatePicker() {
+        const modal = document.getElementById('date-modal');
+        const input = document.getElementById('date-input');
+        
+        // Set input to current selected date
+        const dateStr = this.selectedDate.toISOString().split('T')[0];
+        input.value = dateStr;
+        
+        modal.classList.add('active');
+    },
+
+    closeDatePicker() {
+        document.getElementById('date-modal').classList.remove('active');
+    },
+
+    selectToday() {
+        const input = document.getElementById('date-input');
+        const today = new Date();
+        input.value = today.toISOString().split('T')[0];
+    },
+
+    selectYesterday() {
+        const input = document.getElementById('date-input');
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        input.value = yesterday.toISOString().split('T')[0];
+    },
+
+    async applyDate() {
+        const input = document.getElementById('date-input');
+        if (!input.value) return;
+        
+        this.selectedDate = new Date(input.value + 'T12:00:00');
+        this.closeDatePicker();
+        await this.loadHome();
     }
 };
 
