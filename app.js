@@ -58,35 +58,39 @@ const app = {
         if (count > 0) return;
 
         const exercises = [
-            // Monday - Push
-            { name: 'Bench Press', muscle: 'Chest', dayOfWeek: 1, order: 0, sets: 4, reps: '8-10' },
-            { name: 'Incline Dumbbell Press', muscle: 'Chest', dayOfWeek: 1, order: 1, sets: 3, reps: '10-12' },
-            { name: 'Overhead Press', muscle: 'Shoulders', dayOfWeek: 1, order: 2, sets: 4, reps: '8-10' },
-            { name: 'Tricep Dips', muscle: 'Triceps', dayOfWeek: 1, order: 3, sets: 3, reps: 'AMRAP' },
+            // Day 1 - Upper Chest + Delts
+            { name: 'Incline Dumbbell Press', muscle: 'Upper Chest', dayOfWeek: 1, order: 0, sets: 4, reps: '8-10' },
+            { name: 'Cable or DB Lateral Raises', muscle: 'Delts', dayOfWeek: 1, order: 1, sets: 4, reps: '12-15' },
+            { name: 'Low-to-High Cable Fly', muscle: 'Upper Chest', dayOfWeek: 1, order: 2, sets: 3, reps: '12-15' },
+            { name: 'Seated DB Shoulder Press', muscle: 'Delts', dayOfWeek: 1, order: 3, sets: 3, reps: '8-10' },
+            { name: 'Lateral Raise Burnout', muscle: 'Delts', dayOfWeek: 1, order: 4, sets: 1, reps: 'AMRAP' },
             
-            // Tuesday - Pull
-            { name: 'Deadlift', muscle: 'Back', dayOfWeek: 2, order: 0, sets: 4, reps: '6-8' },
-            { name: 'Pull-ups', muscle: 'Back', dayOfWeek: 2, order: 1, sets: 4, reps: 'AMRAP' },
-            { name: 'Barbell Row', muscle: 'Back', dayOfWeek: 2, order: 2, sets: 4, reps: '8-10' },
-            { name: 'Hammer Curls', muscle: 'Biceps', dayOfWeek: 2, order: 3, sets: 3, reps: '10-12' },
+            // Day 2 - Back + Abs
+            { name: 'Pull-Ups or Lat Pulldown', muscle: 'Lats', dayOfWeek: 2, order: 0, sets: 4, reps: '8-10' },
+            { name: 'Chest-Supported Row', muscle: 'Back', dayOfWeek: 2, order: 1, sets: 3, reps: '10-12' },
+            { name: 'Single-Arm Cable Pulldown', muscle: 'Lats', dayOfWeek: 2, order: 2, sets: 3, reps: '12 per side' },
+            { name: 'Weighted Cable Crunch', muscle: 'Abs', dayOfWeek: 2, order: 3, sets: 4, reps: '10-15' },
+            { name: 'Hanging Leg Raises', muscle: 'Abs', dayOfWeek: 2, order: 4, sets: 2, reps: 'AMRAP' },
             
-            // Wednesday - Legs
-            { name: 'Squat', muscle: 'Legs', dayOfWeek: 3, order: 0, sets: 4, reps: '8-10' },
-            { name: 'Romanian Deadlift', muscle: 'Legs', dayOfWeek: 3, order: 1, sets: 3, reps: '10-12' },
-            { name: 'Leg Press', muscle: 'Legs', dayOfWeek: 3, order: 2, sets: 4, reps: '12-15' },
-            { name: 'Calf Raises', muscle: 'Calves', dayOfWeek: 3, order: 3, sets: 4, reps: '15-20' },
+            // Day 3 - Legs
+            { name: 'Bulgarian Split Squat', muscle: 'Legs', dayOfWeek: 3, order: 0, sets: 3, reps: '8 per leg' },
+            { name: 'Romanian Deadlift', muscle: 'Hamstrings', dayOfWeek: 3, order: 1, sets: 3, reps: '8-10' },
+            { name: 'Leg Press (feet high)', muscle: 'Legs', dayOfWeek: 3, order: 2, sets: 3, reps: '12' },
+            { name: 'Standing Calf Raises', muscle: 'Calves', dayOfWeek: 3, order: 3, sets: 3, reps: '12-15' },
             
-            // Thursday - Upper
-            { name: 'Incline Bench Press', muscle: 'Chest', dayOfWeek: 4, order: 0, sets: 4, reps: '8-10' },
-            { name: 'Cable Row', muscle: 'Back', dayOfWeek: 4, order: 1, sets: 4, reps: '10-12' },
-            { name: 'Lateral Raises', muscle: 'Shoulders', dayOfWeek: 4, order: 2, sets: 4, reps: '12-15' },
-            { name: 'Face Pulls', muscle: 'Rear Delts', dayOfWeek: 4, order: 3, sets: 3, reps: '15-20' },
+            // Day 4 - Shoulders + Arms
+            { name: 'Cable Lateral Raises', muscle: 'Delts', dayOfWeek: 4, order: 0, sets: 4, reps: '12-15' },
+            { name: 'EZ Bar or DB Curl', muscle: 'Biceps', dayOfWeek: 4, order: 1, sets: 3, reps: '8-10' },
+            { name: 'Rope Tricep Pushdown', muscle: 'Triceps', dayOfWeek: 4, order: 2, sets: 3, reps: '10-12' },
+            { name: 'Rear Delt Fly', muscle: 'Rear Delts', dayOfWeek: 4, order: 3, sets: 3, reps: '12-15' },
+            { name: 'Hammer Curl + OH Tricep', muscle: 'Arms', dayOfWeek: 4, order: 4, sets: 2, reps: '12 (superset)' },
             
-            // Friday - Lower
-            { name: 'Front Squat', muscle: 'Legs', dayOfWeek: 5, order: 0, sets: 4, reps: '8-10' },
-            { name: 'Leg Curl', muscle: 'Hamstrings', dayOfWeek: 5, order: 1, sets: 4, reps: '10-12' },
-            { name: 'Bulgarian Split Squat', muscle: 'Legs', dayOfWeek: 5, order: 2, sets: 3, reps: '10-12' },
-            { name: 'Hanging Leg Raises', muscle: 'Core', dayOfWeek: 5, order: 3, sets: 3, reps: 'AMRAP' }
+            // Day 5 - Chest + Back
+            { name: 'Flat DB Press', muscle: 'Chest', dayOfWeek: 5, order: 0, sets: 3, reps: '10' },
+            { name: 'Seated Cable Row', muscle: 'Back', dayOfWeek: 5, order: 1, sets: 3, reps: '12' },
+            { name: 'Incline Push-Ups', muscle: 'Chest', dayOfWeek: 5, order: 2, sets: 3, reps: 'AMRAP' },
+            { name: 'Straight-Arm Pulldown', muscle: 'Lats', dayOfWeek: 5, order: 3, sets: 3, reps: '12-15' },
+            { name: 'Plank Hold', muscle: 'Core', dayOfWeek: 5, order: 4, sets: 3, reps: '45 sec' }
         ];
 
         for (const exercise of exercises) {
@@ -140,7 +144,7 @@ const app = {
         
         // Update header
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const dayNames = ['Rest', 'Push', 'Pull', 'Legs', 'Upper', 'Lower', 'Rest'];
+        const dayNames = ['Rest', 'Upper Chest + Delts', 'Back + Abs', 'Legs', 'Shoulders + Arms', 'Chest + Back', 'Rest'];
         
         document.getElementById('today-title').textContent = days[dayOfWeek];
         document.getElementById('workout-subtitle').textContent = dayNames[dayOfWeek];
@@ -488,7 +492,7 @@ const app = {
             return;
         }
 
-        const dayNames = ['Rest', 'Push', 'Pull', 'Legs', 'Upper', 'Lower', 'Rest'];
+        const dayNames = ['Rest', 'Upper Chest + Delts', 'Back + Abs', 'Legs', 'Shoulders + Arms', 'Chest + Back', 'Rest'];
 
         const historyHTML = await Promise.all(workouts.slice(0, 30).map(async workout => {
             const sets = await this.getRecords('sets', 'workoutId', workout.id);
