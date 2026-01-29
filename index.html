@@ -100,6 +100,18 @@
             margin-bottom: 24px;
         }
 
+        .header-clickable {
+            cursor: pointer;
+            padding: 16px 20px;
+            margin: -16px -20px 24px -20px;
+            border-radius: 16px;
+            transition: background 0.2s;
+        }
+
+        .header-clickable:active {
+            background: var(--bg-secondary);
+        }
+
         .header h1 {
             font-size: 32px;
             font-weight: 700;
@@ -499,26 +511,6 @@
             padding: 0 24px;
         }
 
-        /* Date Picker Button */
-        .date-picker-btn {
-            background: var(--bg-secondary);
-            border: none;
-            border-radius: 12px;
-            width: 44px;
-            height: 44px;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .date-picker-btn:active {
-            transform: scale(0.95);
-            background: var(--bg-tertiary);
-        }
-
         /* Modal */
         .modal {
             display: none;
@@ -649,11 +641,8 @@
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
         <div class="content">
-            <div class="header">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h1 id="today-title" style="margin: 0;">Monday</h1>
-                    <button class="date-picker-btn" onclick="app.showDatePicker()">📅</button>
-                </div>
+            <div class="header header-clickable" onclick="app.showDatePicker()">
+                <h1 id="today-title">Monday</h1>
                 <div class="subtitle" id="workout-subtitle">Push</div>
                 <div class="subtitle" id="selected-date" style="color: var(--accent); font-size: 14px; margin-top: 4px;"></div>
             </div>
